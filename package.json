@@ -1,0 +1,49 @@
+{
+  "name": "storelint",
+  "version": "0.1.0",
+  "description": "Scan a Flutter or React Native/Expo project for Google Play and App Store release blockers.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "storelint": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "pnpm build && node --test test/scan.test.js"
+  },
+  "keywords": [
+    "flutter",
+    "react-native",
+    "expo",
+    "app-store",
+    "google-play",
+    "release",
+    "lint",
+    "checklist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iddriss/storelint"
+  },
+  "homepage": "https://storelint.iraaj.com",
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  }
+}

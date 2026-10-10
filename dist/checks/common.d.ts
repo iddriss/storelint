@@ -1,0 +1,37 @@
+import type { Finding } from '../types.js';
+export type Check = (out: Finding[]) => void;
+/** Run each check in isolation so one parser failure never kills the scan. */
+export declare function runAll(checks: Check[]): Finding[];
+export declare function finding(f: Finding): Finding;
+export declare const DOCS: {
+    readonly targetSdk: "https://developer.android.com/google/play/requirements/target-sdk";
+    readonly pageSize: "https://developer.android.com/guide/practices/page-sizes";
+    readonly signing: "https://developer.android.com/studio/publish/app-signing";
+    readonly cleartext: "https://developer.android.com/privacy-and-security/risks/cleartext-communications";
+    readonly exported: "https://developer.android.com/about/versions/12/behavior-changes-12#exported";
+    readonly playCore: "https://developer.android.com/guide/playcore#playcore-migration";
+    readonly adId: "https://support.google.com/googleplay/android-developer/answer/6048248";
+    readonly dataSafety: "https://support.google.com/googleplay/android-developer/answer/10787469";
+    readonly versionCode: "https://developer.android.com/studio/publish/versioning";
+    readonly proguard: "https://developer.android.com/build/shrink-code";
+    readonly billing: "https://developer.android.com/google/play/billing/deprecation-faq";
+    readonly iosDeployment: "https://developer.apple.com/support/app-store/";
+    readonly privacyManifest: "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files";
+    readonly requiredReason: "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api";
+    readonly usageDescriptions: "https://developer.apple.com/documentation/bundleresources/information-property-list/protected-resources";
+    readonly encryption: "https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations";
+    readonly ats: "https://developer.apple.com/documentation/security/preventing-insecure-network-connections";
+    readonly xcode: "https://developer.apple.com/news/upcoming-requirements/";
+    readonly push: "https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment";
+    readonly launchScreen: "https://developer.apple.com/documentation/uikit/specifying-your-apps-launch-screen";
+    readonly bundleId: "https://developer.apple.com/documentation/xcode/preparing-your-app-for-distribution";
+    readonly expoConfig: "https://docs.expo.dev/versions/latest/config/app/";
+    readonly expoUpgrade: "https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/";
+    readonly secrets: "https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning";
+    readonly androidIcons: "https://developer.android.com/develop/ui/views/launch/icon_design_adaptive";
+    readonly iosIcons: "https://developer.apple.com/design/human-interface-guidelines/app-icons";
+    readonly flutterRelease: "https://docs.flutter.dev/deployment/android";
+    readonly rnRelease: "https://reactnative.dev/docs/signed-apk-android";
+    readonly flutterVersions: "https://docs.flutter.dev/release/archive";
+    readonly rnVersions: "https://reactnative.dev/versions";
+};

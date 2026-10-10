@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Expo Demo",
+    "slug": "expo-demo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "com.iraaj.expodemo",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Expo Demo uses the camera to scan tickets."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-notifications"
+    ]
+  }
+}

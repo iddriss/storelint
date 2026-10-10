@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# NOTE: dist/ is intentionally committed so `npx github:iddriss/storelint`
+# works without a build step. Do not add it here.
+
+# pnpm may create a local store when the global one is on another volume
+.pnpm-store/
