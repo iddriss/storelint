@@ -12,7 +12,7 @@ StoreLint scans the project on disk (no build needed) and reports everything tha
 From the app root (the folder with `pubspec.yaml`, `app.json` or `package.json`):
 
 ```bash
-npx github:iddriss/storelint --json
+npx @iraaj/storelint --json
 ```
 
 Options: a path as first argument, `--platform android|ios` to narrow, `--ci` to exit 1 on blockers (for pipelines). Node 18+ is required; nothing is installed into the project.

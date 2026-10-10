@@ -7,7 +7,7 @@ node_modules/
 .vscode/
 *.swp
 
-# NOTE: dist/ is intentionally committed so `npx github:iddriss/storelint`
+# NOTE: dist/ is intentionally committed so `npx @iraaj/storelint`
 # works without a build step. Do not add it here.
 
 # pnpm may create a local store when the global one is on another volume

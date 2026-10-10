@@ -15,7 +15,7 @@ Then ask Claude "is this app ready for the stores?" and it runs StoreLint and ex
 ## Usage
 
 ```bash
-npx github:iddriss/storelint
+npx @iraaj/storelint
 ```
 
 ```
@@ -183,9 +183,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npx github:iddriss/storelint . --ci
+      - run: npx @iraaj/storelint . --ci
       - if: always()
-        run: npx github:iddriss/storelint . --json > storelint-report.json
+        run: npx @iraaj/storelint . --json > storelint-report.json
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -197,7 +197,7 @@ Exit codes: `0` ok, `1` blockers found (only with `--ci`), `2` usage or scan err
 
 ## Claude Code plugin
 
-The repository doubles as a Claude Code plugin (`.claude-plugin/plugin.json` + `skills/storelint/SKILL.md`). Once installed, ask Claude "is this app ready for the stores?" and it will run `npx github:iddriss/storelint --json`, explain each finding and offer to apply the fixes.
+The repository doubles as a Claude Code plugin (`.claude-plugin/plugin.json` + `skills/storelint/SKILL.md`). Once installed, ask Claude "is this app ready for the stores?" and it will run `npx @iraaj/storelint --json`, explain each finding and offer to apply the fixes.
 
 ## Need it shipped for you?
 
@@ -212,7 +212,7 @@ pnpm install
 pnpm test        # builds dist/ with tsc and runs node --test against test/fixtures/*
 ```
 
-`dist/` is committed on purpose so `npx github:iddriss/storelint` works without a build step. Rebuild and commit it with every source change.
+`dist/` is committed on purpose so `npx @iraaj/storelint` works without a build step. Rebuild and commit it with every source change.
 
 ## License
 
