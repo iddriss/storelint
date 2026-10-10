@@ -4,6 +4,14 @@ StoreLint scans a **Flutter**, **React Native** or **Expo** project folder and r
 
 It reads files only. No build, no Gradle, no Xcode, no network, zero runtime dependencies. The only subprocess is `git ls-files` (optional; falls back to `.gitignore` matching).
 
+## Use it from Claude Code
+
+```
+/plugin marketplace add iddriss/storelint
+/plugin install storelint@storelint
+```
+Then ask Claude "is this app ready for the stores?" and it runs StoreLint and explains each fix.
+
 ## Usage
 
 ```bash

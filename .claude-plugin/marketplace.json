@@ -1,0 +1,18 @@
+{
+  "name": "storelint",
+  "owner": { "name": "Iddriss Raaj" },
+  "metadata": {
+    "description": "StoreLint: lint your Flutter / React Native / Expo app before the store does.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "storelint",
+      "source": "./",
+      "description": "Scan the current mobile project for 2026 Play Store and App Store rejection causes and explain the fixes.",
+      "version": "0.1.0",
+      "category": "mobile",
+      "keywords": ["flutter", "react-native", "expo", "app-store", "play-store", "release"]
+    }
+  ]
+}
