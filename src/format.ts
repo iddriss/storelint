@@ -64,8 +64,9 @@ export function formatPretty(report: Report, opts: FormatOptions): string {
   }
 
   const scoreColor = summary.score >= 90 ? c.green : summary.score >= 60 ? c.yellow : c.red;
+  const scoreText = project.framework === 'unknown' ? c.yellow(c.bold('n/a')) : scoreColor(c.bold(`${summary.score}/100`));
   lines.push(
-    `${c.bold('Score')} ${scoreColor(c.bold(`${summary.score}/100`))}  ${c.dim('·')}  ` +
+    `${c.bold('Score')} ${scoreText}  ${c.dim('·')}  ` +
       `${summary.blocker} blocker${summary.blocker === 1 ? '' : 's'}  ${c.dim('·')}  ` +
       `${summary.warning} warning${summary.warning === 1 ? '' : 's'}  ${c.dim('·')}  ${summary.info} info`,
   );

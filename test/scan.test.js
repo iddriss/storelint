@@ -50,7 +50,8 @@ function assertReportShape(report) {
     for (const k of Object.keys(f)) assert.ok(['id', 'platform', 'severity', 'title', 'detail', 'file', 'line', 'fix', 'docs'].includes(k), `unexpected key ${k}`);
     s[f.severity]++;
   }
-  assert.deepEqual(report.summary, { ...s, score: Math.max(0, 100 - 25 * s.blocker - 5 * s.warning) });
+  const expected = report.project.framework === 'unknown' ? 0 : Math.max(0, 100 - 25 * s.blocker - 5 * s.warning);
+  assert.deepEqual(report.summary, { ...s, score: expected });
 }
 
 describe('flutter-bad fixture', () => {
@@ -260,6 +261,7 @@ describe('options and edge cases', () => {
     assert.equal(r.project.name, 'unknown');
     assert.ok(has(r, 'app.unknown-framework', 'info'));
     assert.ok(has(r, 'app.dotenv-tracked', 'blocker'), 'cross checks still run');
+    assert.equal(r.summary.score, 0);
   });
 
   test('works outside a git repository (gitignore fallback)', async () => {
@@ -280,6 +282,7 @@ describe('options and edge cases', () => {
   test('score formula floors at zero', () => {
     const mk = (severity) => ({ id: 'app.name', platform: 'both', severity, title: '', detail: '', fix: '' });
     assert.deepEqual(summarize([]), { blocker: 0, warning: 0, info: 0, score: 100 });
+    assert.equal(summarize([mk('info')], 'unknown').score, 0, 'no app, no score');
     assert.deepEqual(summarize([mk('warning'), mk('info')]), { blocker: 0, warning: 1, info: 1, score: 95 });
     assert.deepEqual(summarize([mk('blocker'), mk('blocker'), mk('blocker'), mk('blocker'), mk('blocker')]).score, 0);
   });
@@ -321,6 +324,9 @@ describe('CLI', () => {
       const res = run([dir]);
       assert.equal(res.status, 0);
       assert.match(res.stdout, /No Flutter, React Native or Expo project detected/);
+      assert.match(res.stdout, /Score n\/a/);
+      assert.equal(run([dir, '--ci']).status, 1, '--ci fails when no app is detected');
+      assert.ok(!/\d+\/100/.test(res.stdout), 'no score without an app');
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

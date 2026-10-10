@@ -57,7 +57,8 @@ export function formatPretty(report, opts) {
         }
     }
     const scoreColor = summary.score >= 90 ? c.green : summary.score >= 60 ? c.yellow : c.red;
-    lines.push(`${c.bold('Score')} ${scoreColor(c.bold(`${summary.score}/100`))}  ${c.dim('·')}  ` +
+    const scoreText = project.framework === 'unknown' ? c.yellow(c.bold('n/a')) : scoreColor(c.bold(`${summary.score}/100`));
+    lines.push(`${c.bold('Score')} ${scoreText}  ${c.dim('·')}  ` +
         `${summary.blocker} blocker${summary.blocker === 1 ? '' : 's'}  ${c.dim('·')}  ` +
         `${summary.warning} warning${summary.warning === 1 ? '' : 's'}  ${c.dim('·')}  ${summary.info} info`);
     lines.push(`Want it fixed and shipped? ${c.underline(SHIP_URL)}`);

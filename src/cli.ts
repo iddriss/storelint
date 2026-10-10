@@ -9,13 +9,13 @@ Usage: storelint [path] [--json] [--ci] [--platform android|ios] [--no-color]
 
   path                 Project directory (default: current directory)
   --json               Print the report as JSON (schemaVersion 1)
-  --ci                 Exit with code 1 when any blocker is found
+  --ci                 Exit with code 1 when any blocker is found or no app is detected
   --platform <p>       Only report android or ios findings (cross-platform ones are kept)
   --no-color           Disable ANSI colours (NO_COLOR is also respected)
   -h, --help           Show this help
   -v, --version        Print the version
 
-Exit codes: 0 ok, 1 blockers found (with --ci), 2 usage or scan error.
+Exit codes: 0 ok, 1 blockers found or no app detected (with --ci), 2 usage or scan error.
 `;
 
 interface Args {
@@ -74,7 +74,7 @@ function main(): number {
   } else {
     process.stdout.write(formatPretty(report, { color: useColor() }));
   }
-  if (parsed.ci && report.summary.blocker > 0) return 1;
+  if (parsed.ci && (report.summary.blocker > 0 || report.project.framework === 'unknown')) return 1;
   return 0;
 }
 

@@ -20,7 +20,7 @@ export interface Summary {
     blocker: number;
     warning: number;
     info: number;
-    /** 100 - 25*blockers - 5*warnings, floored at 0. */
+    /** 100 - 25*blockers - 5*warnings, floored at 0. Always 0 when the framework is `unknown`. */
     score: number;
 }
 export interface Report {

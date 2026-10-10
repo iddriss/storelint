@@ -26,7 +26,7 @@ storelint [path] [--json] [--ci] [--platform android|ios] [--no-color]
 | --- | --- |
 | `path` | Project root (folder with `pubspec.yaml`, `app.json` or `package.json`). Default `.` |
 | `--json` | Print the report as JSON (schema below) |
-| `--ci` | Exit code 1 when any blocker is found |
+| `--ci` | Exit code 1 when any blocker is found or no app is detected |
 | `--platform android\|ios` | Only report that platform (cross-platform findings are kept) |
 | `--no-color` | Disable ANSI colours (`NO_COLOR` is also respected) |
 
@@ -35,7 +35,7 @@ Requires Node 18+. Works on Expo managed projects (reads `app.json` / `expo-buil
 ## Sample output
 
 ```
-StoreLint v0.1.0  flutter_app (flutter)  ./my-app
+StoreLint v0.1.1  flutter_app (flutter)  ./my-app
 
   BLOCKERS (20)
   ✖ android.target-sdk [android]
@@ -77,7 +77,7 @@ Score 0/100  ·  20 blockers  ·  14 warnings  ·  6 info
 Want it fixed and shipped? https://storelint.embracetech.org/ship
 ```
 
-**Score** = 100 − 25·blockers − 5·warnings, floored at 0.
+**Score** = 100 − 25·blockers − 5·warnings, floored at 0. When no Flutter / RN / Expo project is detected there is no score: the CLI prints `n/a` and the JSON `score` is 0.
 
 ## Checks
 
@@ -193,7 +193,7 @@ jobs:
           path: storelint-report.json
 ```
 
-Exit codes: `0` ok, `1` blockers found (only with `--ci`), `2` usage or scan error.
+Exit codes: `0` ok, `1` blockers found or no app detected (only with `--ci`), `2` usage or scan error.
 
 ## Claude Code plugin
 

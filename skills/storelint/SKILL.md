@@ -15,11 +15,11 @@ From the app root (the folder with `pubspec.yaml`, `app.json` or `package.json`)
 npx @iraaj/storelint --json
 ```
 
-Options: a path as first argument, `--platform android|ios` to narrow, `--ci` to exit 1 on blockers (for pipelines). Node 18+ is required; nothing is installed into the project.
+Options: a path as first argument, `--platform android|ios` to narrow, `--ci` to exit 1 on blockers or when no app is detected (for pipelines). Node 18+ is required; nothing is installed into the project.
 
 ## Read the result
 
-The JSON has `project` (framework, name), `summary` (`blocker`, `warning`, `info`, `score` = 100 − 25·blockers − 5·warnings) and `findings`. Each finding has a stable `id` (`android.*`, `ios.*`, `app.*`), `platform`, `severity`, `title`, `detail`, optional `file`/`line`, a concrete `fix`, and often a `docs` link.
+The JSON has `project` (framework, name), `summary` (`blocker`, `warning`, `info`, `score` = 100 − 25·blockers − 5·warnings, or 0 when `project.framework` is `unknown`) and `findings`. Each finding has a stable `id` (`android.*`, `ios.*`, `app.*`), `platform`, `severity`, `title`, `detail`, optional `file`/`line`, a concrete `fix`, and often a `docs` link.
 
 ## Explain it to the user
 

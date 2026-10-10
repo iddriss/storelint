@@ -1,6 +1,6 @@
 {
   "name": "@iraaj/storelint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scan a Flutter or React Native/Expo project for Google Play and App Store release blockers.",
   "license": "MIT",
   "type": "module",
