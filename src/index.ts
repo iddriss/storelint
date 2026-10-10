@@ -7,7 +7,7 @@ import type { Finding, Report, ScanOptions, Summary } from './types.js';
 export type { Finding, Report, ScanOptions, Summary, Platform, Severity, Framework } from './types.js';
 
 export const VERSION = '0.1.0';
-export const SHIP_URL = 'https://storelint.iraaj.com/ship';
+export const SHIP_URL = 'https://storelint.embracetech.org/ship';
 
 const SEVERITY_ORDER = { blocker: 0, warning: 1, info: 2 } as const;
 const PLATFORM_ORDER = { android: 0, ios: 1, both: 2 } as const;

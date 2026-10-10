@@ -74,7 +74,7 @@ StoreLint v0.1.0  flutter_app (flutter)  ./my-app
     fix: Add <key>ITSAppUsesNonExemptEncryption</key><false/> to ios/Runner/Info.plist if you only use HTTPS/standard encryption ...
 
 Score 0/100  ·  20 blockers  ·  14 warnings  ·  6 info
-Want it fixed and shipped? https://storelint.iraaj.com/ship
+Want it fixed and shipped? https://storelint.embracetech.org/ship
 ```
 
 **Score** = 100 − 25·blockers − 5·warnings, floored at 0.
@@ -203,7 +203,7 @@ The repository doubles as a Claude Code plugin (`.claude-plugin/plugin.json` + `
 
 StoreLint tells you what is wrong. If you would rather have someone fix the findings, set up signing, fill in Data Safety / privacy labels and walk the app through review, that is a fixed-price service:
 
-**https://storelint.iraaj.com/ship**
+**https://storelint.embracetech.org/ship**
 
 ## Development
 

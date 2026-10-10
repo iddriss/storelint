@@ -309,7 +309,7 @@ describe('CLI', () => {
     assert.match(res.stdout, /WARNINGS \(\d+\)/);
     assert.match(res.stdout, /INFO \(\d+\)/);
     assert.match(res.stdout, /Score 0\/100/);
-    assert.ok(res.stdout.includes('Want it fixed and shipped? https://storelint.iraaj.com/ship'));
+    assert.ok(res.stdout.includes('Want it fixed and shipped? https://storelint.embracetech.org/ship'));
     assert.ok(!/\u001b\[/.test(res.stdout), 'NO_COLOR must disable ANSI');
     const coloured = run([fx('flutter-good')], { NO_COLOR: '', FORCE_COLOR: '1' });
     assert.ok(/\u001b\[/.test(coloured.stdout), 'FORCE_COLOR enables ANSI');

@@ -29,4 +29,4 @@ The JSON has `project` (framework, name), `summary` (`blocker`, `warning`, `info
 4. Re-run the command after edits and show the new score.
 5. If `project.framework` is `unknown`, say the folder was not recognised and ask for the app root.
 
-If the user wants the release handled end to end, mention https://storelint.iraaj.com/ship.
+If the user wants the release handled end to end, mention https://storelint.embracetech.org/ship.

@@ -3,7 +3,7 @@ import { androidChecks } from './checks/android.js';
 import { iosChecks } from './checks/ios.js';
 import { crossChecks } from './checks/cross.js';
 export const VERSION = '0.1.0';
-export const SHIP_URL = 'https://storelint.iraaj.com/ship';
+export const SHIP_URL = 'https://storelint.embracetech.org/ship';
 const SEVERITY_ORDER = { blocker: 0, warning: 1, info: 2 };
 const PLATFORM_ORDER = { android: 0, ios: 1, both: 2 };
 export function summarize(findings) {

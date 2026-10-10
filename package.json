@@ -41,7 +41,7 @@
     "type": "git",
     "url": "https://github.com/iddriss/storelint"
   },
-  "homepage": "https://storelint.iraaj.com",
+  "homepage": "https://storelint.embracetech.org",
   "devDependencies": {
     "@types/node": "^20.14.0",
     "typescript": "^5.5.0"

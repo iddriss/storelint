@@ -4,9 +4,9 @@
   "description": "Lint a Flutter, React Native or Expo project for Google Play and App Store release blockers (targetSdk, 16 KB pages, privacy manifests, signing, secrets) and explain how to fix them.",
   "author": {
     "name": "Iddriss Raaj",
-    "url": "https://storelint.iraaj.com"
+    "url": "https://storelint.embracetech.org"
   },
-  "homepage": "https://storelint.iraaj.com",
+  "homepage": "https://storelint.embracetech.org",
   "repository": "https://github.com/iddriss/storelint",
   "license": "MIT",
   "keywords": ["flutter", "react-native", "expo", "app-store", "google-play", "release"]
