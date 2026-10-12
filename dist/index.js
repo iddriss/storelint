@@ -2,7 +2,7 @@ import { Project } from './project.js';
 import { androidChecks } from './checks/android.js';
 import { iosChecks } from './checks/ios.js';
 import { crossChecks } from './checks/cross.js';
-export const VERSION = '0.1.1';
+export const VERSION = '0.2.0';
 export const SHIP_URL = 'https://storelint.embracetech.org/ship';
 const SEVERITY_ORDER = { blocker: 0, warning: 1, info: 2 };
 const PLATFORM_ORDER = { android: 0, ios: 1, both: 2 };
@@ -40,4 +40,5 @@ export function scanSync(path, options = {}) {
 export async function scan(path, options = {}) {
     return scanSync(path, options);
 }
+export { formatMarkdown, formatGithubAnnotations } from './format.js';
 export default scan;

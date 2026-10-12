@@ -15,7 +15,7 @@ From the app root (the folder with `pubspec.yaml`, `app.json` or `package.json`)
 npx @iraaj/storelint --json
 ```
 
-Options: a path as first argument, `--platform android|ios` to narrow, `--ci` to exit 1 on blockers or when no app is detected (for pipelines). Node 18+ is required; nothing is installed into the project.
+Options: a path as first argument, `--platform android|ios` to narrow, `--ci` to exit 1 on blockers or when no app is detected (for pipelines), `--markdown` for a report to paste into a PR or ticket. For GitHub CI, suggest the action: `- uses: iddriss/storelint@v1` after `actions/checkout`. Node 18+ is required; nothing is installed into the project.
 
 ## Read the result
 

@@ -19,13 +19,15 @@ npx @iraaj/storelint
 ```
 
 ```
-storelint [path] [--json] [--ci] [--platform android|ios] [--no-color]
+storelint [path] [--json | --markdown] [--github] [--ci] [--platform android|ios] [--no-color]
 ```
 
 | Flag | Effect |
 | --- | --- |
 | `path` | Project root (folder with `pubspec.yaml`, `app.json` or `package.json`). Default `.` |
 | `--json` | Print the report as JSON (schema below) |
+| `--markdown` | Print the report as GitHub-flavoured Markdown (for PR comments, wikis, tickets) |
+| `--github` | GitHub Actions mode: one annotation per blocker and warning on the pull request diff, and the Markdown report in the job summary |
 | `--ci` | Exit code 1 when any blocker is found or no app is detected |
 | `--platform android\|ios` | Only report that platform (cross-platform findings are kept) |
 | `--no-color` | Disable ANSI colours (`NO_COLOR` is also respected) |
@@ -35,7 +37,7 @@ Requires Node 18+. Works on Expo managed projects (reads `app.json` / `expo-buil
 ## Sample output
 
 ```
-StoreLint v0.1.1  flutter_app (flutter)  ./my-app
+StoreLint v0.2.0  flutter_app (flutter)  ./my-app
 
   BLOCKERS (20)
   ✖ android.target-sdk [android]
@@ -163,13 +165,13 @@ Severity is the default; some checks downgrade when the toolchain manages the va
 From Node:
 
 ```js
-import { scan } from 'storelint';
+import { scan } from '@iraaj/storelint';
 const report = await scan('./my-app', { platform: 'ios' }); // options are optional
 ```
 
-## CI
+## GitHub Action
 
-Fail the pipeline when a blocker is present:
+Check every pull request for store blockers. No Node setup, no install step:
 
 ```yaml
 # .github/workflows/storelint.yml
@@ -180,17 +182,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: iddriss/storelint@v1
+```
+
+Blockers and warnings appear as annotations on the changed files, the full report lands in the job summary, and the job fails when a blocker is present.
+
+| Input | Default | Effect |
+| --- | --- | --- |
+| `path` | `.` | Folder of the app, for monorepos (e.g. `apps/mobile`) |
+| `platform` | both | `android` or `ios` to narrow the report |
+| `fail-on-blockers` | `true` | Set to `false` to report without failing the job |
+
+Outputs: `score`, `blockers`, `warnings`, and `report` (path of the JSON report, ready for `actions/upload-artifact`).
+
+```yaml
+      - id: storelint
+        uses: iddriss/storelint@v1
         with:
-          node-version: 20
-      - run: npx @iraaj/storelint . --ci
-      - if: always()
-        run: npx @iraaj/storelint . --json > storelint-report.json
-      - if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: storelint-report
-          path: storelint-report.json
+          path: apps/mobile
+          fail-on-blockers: false
+      - run: echo "Store readiness ${{ steps.storelint.outputs.score }}/100"
+```
+
+### Other CI systems
+
+Any runner with Node 18+ can call the CLI directly:
+
+```bash
+npx @iraaj/storelint . --ci                      # exit 1 on blockers
+npx @iraaj/storelint . --markdown > storelint.md  # report to attach or post
+npx @iraaj/storelint . --json > storelint.json
 ```
 
 Exit codes: `0` ok, `1` blockers found or no app detected (only with `--ci`), `2` usage or scan error.

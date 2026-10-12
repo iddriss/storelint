@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 import * as fs from 'node:fs';
 import { scanSync, VERSION } from './index.js';
-import { formatPretty, useColor } from './format.js';
+import * as path from 'node:path';
+import { formatGithubAnnotations, formatMarkdown, formatPretty, useColor } from './format.js';
 const HELP = `storelint ${VERSION} — lint your Flutter / React Native / Expo app before the store does.
 
-Usage: storelint [path] [--json] [--ci] [--platform android|ios] [--no-color]
+Usage: storelint [path] [--json | --markdown] [--github] [--ci] [--platform android|ios] [--no-color]
 
   path                 Project directory (default: current directory)
   --json               Print the report as JSON (schemaVersion 1)
+  --markdown           Print the report as GitHub-flavoured Markdown
+  --github             GitHub Actions mode: annotate the pull request with blockers and warnings
+                       and write the Markdown report to the job summary
   --ci                 Exit with code 1 when any blocker is found or no app is detected
   --platform <p>       Only report android or ios findings (cross-platform ones are kept)
   --no-color           Disable ANSI colours (NO_COLOR is also respected)
@@ -17,12 +21,16 @@ Usage: storelint [path] [--json] [--ci] [--platform android|ios] [--no-color]
 Exit codes: 0 ok, 1 blockers found or no app detected (with --ci), 2 usage or scan error.
 `;
 function parseArgs(argv) {
-    const args = { path: '.', json: false, ci: false };
+    const args = { path: '.', json: false, markdown: false, github: false, ci: false };
     let pathSet = false;
     for (let i = 0; i < argv.length; i++) {
         const a = argv[i];
         if (a === '--json')
             args.json = true;
+        else if (a === '--markdown')
+            args.markdown = true;
+        else if (a === '--github')
+            args.github = true;
         else if (a === '--ci')
             args.ci = true;
         else if (a === '--no-color')
@@ -48,6 +56,8 @@ function parseArgs(argv) {
             return { exit: 2, message: `Unexpected argument: ${a}\n\n${HELP}` };
         }
     }
+    if (args.json && args.markdown)
+        return { exit: 2, message: '--json and --markdown cannot be combined\n' };
     return args;
 }
 function main() {
@@ -69,8 +79,27 @@ function main() {
         process.stderr.write(`storelint: scan failed: ${err.message}\n`);
         return 2;
     }
+    if (parsed.github) {
+        // Annotation paths must be relative to the repository root, which is where Actions runs the step.
+        const rel = path.relative(process.env.GITHUB_WORKSPACE || process.cwd(), path.resolve(parsed.path));
+        const annotations = formatGithubAnnotations(report, rel.startsWith('..') ? '' : rel);
+        // In --json mode stdout must stay parseable, so the workflow commands go to stderr (Actions reads both).
+        (parsed.json ? process.stderr : process.stdout).write(annotations);
+        const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+        if (summaryFile) {
+            try {
+                fs.appendFileSync(summaryFile, formatMarkdown(report));
+            }
+            catch (err) {
+                process.stderr.write(`storelint: could not write the job summary: ${err.message}\n`);
+            }
+        }
+    }
     if (parsed.json) {
         process.stdout.write(JSON.stringify(report, null, 2) + '\n');
+    }
+    else if (parsed.markdown) {
+        process.stdout.write(formatMarkdown(report));
     }
     else {
         process.stdout.write(formatPretty(report, { color: useColor() }));
@@ -79,4 +108,9 @@ function main() {
         return 1;
     return 0;
 }
+// `storelint | head` closes the pipe early; that is not an error worth a stack trace.
+process.stdout.on('error', (err) => {
+    if (err.code !== 'EPIPE')
+        throw err;
+});
 process.exitCode = main();

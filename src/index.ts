@@ -6,7 +6,7 @@ import type { Finding, Framework, Report, ScanOptions, Summary } from './types.j
 
 export type { Finding, Report, ScanOptions, Summary, Platform, Severity, Framework } from './types.js';
 
-export const VERSION = '0.1.1';
+export const VERSION = '0.2.0';
 export const SHIP_URL = 'https://storelint.embracetech.org/ship';
 
 const SEVERITY_ORDER = { blocker: 0, warning: 1, info: 2 } as const;
@@ -50,5 +50,7 @@ export function scanSync(path: string, options: ScanOptions = {}): Report {
 export async function scan(path: string, options: ScanOptions = {}): Promise<Report> {
   return scanSync(path, options);
 }
+
+export { formatMarkdown, formatGithubAnnotations } from './format.js';
 
 export default scan;

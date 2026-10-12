@@ -1,0 +1,51 @@
+name: StoreLint
+description: Catch Google Play and App Store rejection causes in a Flutter, React Native or Expo app before you submit.
+author: iddriss
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  path:
+    description: Folder of the app (the one with pubspec.yaml, app.json or package.json).
+    default: .
+  platform:
+    description: Only report this platform (android or ios). Empty reports both.
+    default: ''
+  fail-on-blockers:
+    description: Fail the job when a blocker is found or no app is detected.
+    default: 'true'
+outputs:
+  score:
+    description: Readiness score from 0 to 100.
+    value: ${{ steps.scan.outputs.score }}
+  blockers:
+    description: Number of blockers.
+    value: ${{ steps.scan.outputs.blockers }}
+  warnings:
+    description: Number of warnings.
+    value: ${{ steps.scan.outputs.warnings }}
+  report:
+    description: Path of the JSON report file.
+    value: ${{ steps.scan.outputs.report }}
+runs:
+  using: composite
+  steps:
+    - id: scan
+      shell: bash
+      env:
+        STORELINT_PATH: ${{ inputs.path }}
+        STORELINT_PLATFORM: ${{ inputs.platform }}
+        STORELINT_FAIL: ${{ inputs.fail-on-blockers }}
+      run: |
+        args=("$STORELINT_PATH" --github)
+        if [ -n "$STORELINT_PLATFORM" ]; then args+=(--platform "$STORELINT_PLATFORM"); fi
+        report="$RUNNER_TEMP/storelint-report.json"
+        # The JSON pass is for the outputs only; the second pass prints the report, annotations and summary.
+        node "$GITHUB_ACTION_PATH/dist/cli.js" "${args[@]/--github/--json}" > "$report"
+        node -e '
+          const r = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+          const s = r.summary;
+          require("fs").appendFileSync(process.env.GITHUB_OUTPUT, `score=${s.score}\nblockers=${s.blocker}\nwarnings=${s.warning}\nreport=${process.argv[1]}\n`);
+        ' "$report"
+        if [ "$STORELINT_FAIL" = "true" ]; then args+=(--ci); fi
+        node "$GITHUB_ACTION_PATH/dist/cli.js" "${args[@]}"

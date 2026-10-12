@@ -5,7 +5,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { scan, scanSync, summarize } from '../dist/index.js';
+import { scan, scanSync, summarize, formatMarkdown, formatGithubAnnotations } from '../dist/index.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
@@ -339,6 +339,61 @@ describe('CLI', () => {
     const eq = run([fx('flutter-bad'), '--platform=android', '--json']);
     assert.ok(JSON.parse(eq.stdout).findings.every((f) => f.platform !== 'ios'));
     assert.equal(run([fx('flutter-bad'), '--platform', 'web']).status, 2);
+  });
+
+  test('--markdown prints a GitHub-flavoured report', () => {
+    const res = run([fx('flutter-bad'), '--markdown']);
+    assert.equal(res.status, 0);
+    assert.match(res.stdout, /^## StoreLint: 0\/100/);
+    assert.match(res.stdout, /### Blockers \(\d+\)/);
+    assert.match(res.stdout, /\| \[`android\.target-sdk`\]\(https:\/\/[^)]+\) \| targetSdk is 33/);
+    assert.ok(res.stdout.includes('Want it fixed and shipped? https://storelint.embracetech.org/ship'));
+    const rows = res.stdout.split('\n').filter((l) => l.startsWith('| ') && !l.startsWith('| Check') && !l.startsWith('| ---'));
+    assert.equal(rows.length, scanSync(fx('flutter-bad')).findings.length, 'one table row per finding');
+    for (const row of rows) assert.equal(row.replace(/\\\|/g, '').split('|').length, 6, `4 cells: ${row}`);
+    assert.match(formatMarkdown(scanSync(fx('flutter-good'))), /^## StoreLint: \d+\/100/);
+    assert.equal(run([fx('flutter-bad'), '--markdown', '--json']).status, 2);
+  });
+
+  test('--github emits annotations and writes the job summary', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'storelint-gh-'));
+    try {
+      const summary = path.join(dir, 'summary.md');
+      const report = scanSync(fx('flutter-bad'));
+      const res = run([fx('flutter-bad'), '--github', '--ci'], { GITHUB_STEP_SUMMARY: summary, GITHUB_WORKSPACE: root });
+      assert.equal(res.status, 1);
+      const errors = res.stdout.split('\n').filter((l) => l.startsWith('::error '));
+      const warnings = res.stdout.split('\n').filter((l) => l.startsWith('::warning '));
+      assert.equal(errors.length, report.summary.blocker);
+      assert.equal(warnings.length, report.summary.warning);
+      assert.ok(errors.some((l) => /^::error file=test\/fixtures\/flutter-bad\/android\/app\/build\.gradle,line=\d+,title=StoreLint android\.target-sdk::targetSdk is 33/.test(l)), 'paths are relative to the workspace');
+      assert.match(res.stdout, /BLOCKERS \(\d+\)/, 'pretty report still printed');
+      assert.match(fs.readFileSync(summary, 'utf8'), /^## StoreLint: 0\/100/);
+      const json = run([fx('flutter-bad'), '--github', '--json'], { GITHUB_STEP_SUMMARY: '', GITHUB_WORKSPACE: root });
+      assert.equal(JSON.parse(json.stdout).schemaVersion, 1, 'stdout stays valid JSON');
+      assert.match(json.stderr, /^::error /m);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test('annotation text is escaped for workflow commands', () => {
+    const out = formatGithubAnnotations({
+      schemaVersion: 1, scannedAt: '', project: { path: '.', framework: 'flutter', name: 'x' },
+      summary: { blocker: 1, warning: 0, info: 1, score: 75 },
+      findings: [
+        { id: 'app.secrets', platform: 'both', severity: 'blocker', title: '100% bad\nline two', detail: 'd', file: 'lib/a,b:c.dart', line: 3, fix: 'do it' },
+        { id: 'app.name', platform: 'both', severity: 'info', title: 't', detail: 'd', fix: 'f' },
+      ],
+    }, 'apps/mobile');
+    assert.equal(out, '::error file=apps/mobile/lib/a%2Cb%3Ac.dart,line=3,title=StoreLint app.secrets::100%25 bad%0Aline two. Fix: do it\n');
+  });
+
+  test('action.yml runs the bundled CLI in GitHub mode', () => {
+    const action = fs.readFileSync(path.join(root, 'action.yml'), 'utf8');
+    assert.match(action, /using: composite/);
+    assert.match(action, /dist\/cli\.js/);
+    assert.match(action, /--github/);
   });
 
   test('usage errors and help', () => {

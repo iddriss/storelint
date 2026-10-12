@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: corepack enable && pnpm install --frozen-lockfile && pnpm test
+      - run: git diff --exit-code dist
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clean project passes
+        uses: ./
+        with:
+          path: test/fixtures/flutter-good
+      - name: Broken project reports without failing
+        id: bad
+        uses: ./
+        with:
+          path: test/fixtures/flutter-bad
+          fail-on-blockers: false
+      - name: Outputs are set
+        env:
+          SCORE: ${{ steps.bad.outputs.score }}
+          BLOCKERS: ${{ steps.bad.outputs.blockers }}
+          REPORT: ${{ steps.bad.outputs.report }}
+        run: |
+          test "$SCORE" = "0"
+          test "$BLOCKERS" -gt 0
+          test -s "$REPORT"
